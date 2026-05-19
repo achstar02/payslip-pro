@@ -95,10 +95,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       <div style="text-align:center;margin-bottom:20px">
         <div style="font-size:14px;color:#666;margin-bottom:16px">Enter your 4-digit PIN</div>
         <div style="display:flex;justify-content:center;gap:12px;margin-bottom:24px">
-          <input type="tel" inputmode="numeric" maxlength="1" class="pin-input" id="pin1" oninput="pinMove(this,1)" onkeydown="pinBack(event,this,1)" autofocus>
-          <input type="tel" inputmode="numeric" maxlength="1" class="pin-input" id="pin2" oninput="pinMove(this,2)" onkeydown="pinBack(event,this,2)">
-          <input type="tel" inputmode="numeric" maxlength="1" class="pin-input" id="pin3" oninput="pinMove(this,3)" onkeydown="pinBack(event,this,3)">
-          <input type="tel" inputmode="numeric" maxlength="1" class="pin-input" id="pin4" oninput="pinMove(this,4)" onkeydown="pinBack(event,this,4)">
+          <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-input" id="pin1" onkeyup="pinHandler(1)" onclick="this.select()" autofocus>
+          <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-input" id="pin2" onkeyup="pinHandler(2)" onclick="this.select()">
+          <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-input" id="pin3" onkeyup="pinHandler(3)" onclick="this.select()">
+          <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-input" id="pin4" onkeyup="pinHandler(4)" onclick="this.select()">
         </div>
       </div>
       <button class="btn-primary" onclick="doPinLogin()">Login with PIN</button>
@@ -111,10 +111,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       <div class="input-group">
         <div style="font-size:13px;color:#666;margin-bottom:8px">Set 4-digit PIN</div>
         <div style="display:flex;gap:8px">
-          <input type="tel" inputmode="numeric" maxlength="1" class="pin-input" id="reg-pin1" oninput="regPinMove(this,1)" onkeydown="regPinBack(event,this,1)">
-          <input type="tel" inputmode="numeric" maxlength="1" class="pin-input" id="reg-pin2" oninput="regPinMove(this,2)" onkeydown="regPinBack(event,this,2)">
-          <input type="tel" inputmode="numeric" maxlength="1" class="pin-input" id="reg-pin3" oninput="regPinMove(this,3)" onkeydown="regPinBack(event,this,3)">
-          <input type="tel" inputmode="numeric" maxlength="1" class="pin-input" id="reg-pin4" oninput="regPinMove(this,4)" onkeydown="regPinBack(event,this,4)">
+          <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-input" id="reg-pin1" onkeyup="regPinHandler(1)" onclick="this.select()">
+          <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-input" id="reg-pin2" onkeyup="regPinHandler(2)" onclick="this.select()">
+          <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-input" id="reg-pin3" onkeyup="regPinHandler(3)" onclick="this.select()">
+          <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-input" id="reg-pin4" onkeyup="regPinHandler(4)" onclick="this.select()">
         </div>
       </div>
       <button class="btn-primary" onclick="doRegister()">Register</button>
@@ -365,17 +365,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 
 <script>
 
-function regPinMove(inp,n){
+function regPinHandler(n){
+  var inp=document.getElementById('reg-pin'+n);
   inp.value=inp.value.replace(/[^0-9]/g,'');
   if(inp.value.length===1 && n<4){
-    document.getElementById('reg-pin'+(n+1)).focus();
-  }
-}
-function regPinBack(e,inp,n){
-  if(e.key==='Backspace' && inp.value==='' && n>1){
-    var prev=document.getElementById('reg-pin'+(n-1));
-    prev.value='';
-    prev.focus();
+    setTimeout(function(){document.getElementById('reg-pin'+(n+1)).focus()},10);
   }
 }
 function getRegPin(){
@@ -386,25 +380,25 @@ function getRegPin(){
 }
 
 
-// PIN Login Functions (Simple & Robust)
-function pinMove(inp,n){
+// PIN Login Functions (Ultra-Simple - onkeyup + setTimeout)
+function pinHandler(n){
+  var inp=document.getElementById('pin'+n);
   // Allow only digits
   inp.value=inp.value.replace(/[^0-9]/g,'');
-  // Auto-advance to next input
+  // Auto-advance to next input (with delay to avoid race condition)
   if(inp.value.length===1 && n<4){
-    document.getElementById('pin'+(n+1)).focus();
+    setTimeout(function(){document.getElementById('pin'+(n+1)).focus()},10);
   }
   // Auto-submit on last input
   if(n===4 && inp.value.length===1){
-    doPinLogin();
+    setTimeout(doPinLogin,100);
   }
 }
-function pinBack(e,inp,n){
-  if(e.key==='Backspace' && inp.value==='' && n>1){
-    var prev=document.getElementById('pin'+(n-1));
-    prev.value='';
-    prev.focus();
-  }
+function getPin(){
+  return document.getElementById('pin1').value+
+         document.getElementById('pin2').value+
+         document.getElementById('pin3').value+
+         document.getElementById('pin4').value;
 }
 function getPin(){
   return document.getElementById('pin1').value+
