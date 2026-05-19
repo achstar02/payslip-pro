@@ -94,11 +94,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     <div id="login-form">
       <div style="text-align:center;margin-bottom:20px">
         <div style="font-size:14px;color:#666;margin-bottom:16px">Enter your 4-digit PIN</div>
-        <div style="display:flex;justify-content:center;gap:12px;margin-bottom:24px" id="pin-container">
-          <input type="tel" inputmode="numeric" maxlength="1" class="pin-input" id="pin1" autofocus>
-          <input type="tel" inputmode="numeric" maxlength="1" class="pin-input" id="pin2">
-          <input type="tel" inputmode="numeric" maxlength="1" class="pin-input" id="pin3">
-          <input type="tel" inputmode="numeric" maxlength="1" class="pin-input" id="pin4">
+        <div style="display:flex;justify-content:center;gap:12px;margin-bottom:24px">
+          <input type="tel" inputmode="numeric" maxlength="1" class="pin-input" id="pin1" oninput="pinMove(this,1)" onkeydown="pinBack(event,this,1)" autofocus>
+          <input type="tel" inputmode="numeric" maxlength="1" class="pin-input" id="pin2" oninput="pinMove(this,2)" onkeydown="pinBack(event,this,2)">
+          <input type="tel" inputmode="numeric" maxlength="1" class="pin-input" id="pin3" oninput="pinMove(this,3)" onkeydown="pinBack(event,this,3)">
+          <input type="tel" inputmode="numeric" maxlength="1" class="pin-input" id="pin4" oninput="pinMove(this,4)" onkeydown="pinBack(event,this,4)">
         </div>
       </div>
       <button class="btn-primary" onclick="doPinLogin()">Login with PIN</button>
@@ -110,11 +110,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
       <div class="input-group"><input class="input-field" id="reg-name" placeholder="Full Name"></div>
       <div class="input-group">
         <div style="font-size:13px;color:#666;margin-bottom:8px">Set 4-digit PIN</div>
-        <div style="display:flex;gap:8px" id="reg-pin-container">
-          <input type="tel" inputmode="numeric" maxlength="1" class="pin-input" id="reg-pin1">
-          <input type="tel" inputmode="numeric" maxlength="1" class="pin-input" id="reg-pin2">
-          <input type="tel" inputmode="numeric" maxlength="1" class="pin-input" id="reg-pin3">
-          <input type="tel" inputmode="numeric" maxlength="1" class="pin-input" id="reg-pin4">
+        <div style="display:flex;gap:8px">
+          <input type="tel" inputmode="numeric" maxlength="1" class="pin-input" id="reg-pin1" oninput="regPinMove(this,1)" onkeydown="regPinBack(event,this,1)">
+          <input type="tel" inputmode="numeric" maxlength="1" class="pin-input" id="reg-pin2" oninput="regPinMove(this,2)" onkeydown="regPinBack(event,this,2)">
+          <input type="tel" inputmode="numeric" maxlength="1" class="pin-input" id="reg-pin3" oninput="regPinMove(this,3)" onkeydown="regPinBack(event,this,3)">
+          <input type="tel" inputmode="numeric" maxlength="1" class="pin-input" id="reg-pin4" oninput="regPinMove(this,4)" onkeydown="regPinBack(event,this,4)">
         </div>
       </div>
       <button class="btn-primary" onclick="doRegister()">Register</button>
@@ -365,27 +365,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 
 <script>
 
-function initRegPinInputs(){
-  var container=document.getElementById('reg-pin-container');
-  if(!container)return;
-  var inputs=container.querySelectorAll('.pin-input');
-  inputs.forEach(function(inp,idx){
-    inp.addEventListener('input',function(e){
-      this.value=this.value.replace(/[^0-9]/g,'');
-      if(this.value.length===1 && idx<inputs.length-1){
-        inputs[idx+1].focus();
-      }
-    });
-    inp.addEventListener('keydown',function(e){
-      if(e.key==='Backspace' && this.value==='' && idx>0){
-        inputs[idx-1].value='';
-        inputs[idx-1].focus();
-      }
-    });
-    inp.addEventListener('focus',function(){
-      setTimeout(function(){inp.select()},10);
-    });
-  });
+function regPinMove(inp,n){
+  inp.value=inp.value.replace(/[^0-9]/g,'');
+  if(inp.value.length===1 && n<4){
+    document.getElementById('reg-pin'+(n+1)).focus();
+  }
+}
+function regPinBack(e,inp,n){
+  if(e.key==='Backspace' && inp.value==='' && n>1){
+    var prev=document.getElementById('reg-pin'+(n-1));
+    prev.value='';
+    prev.focus();
+  }
 }
 function getRegPin(){
   return document.getElementById('reg-pin1').value+
@@ -395,45 +386,25 @@ function getRegPin(){
 }
 
 
-// PIN Login Functions (Fixed)
-function initPinInputs(){
-  var container=document.getElementById('pin-container');
-  if(!container)return;
-  var inputs=container.querySelectorAll('.pin-input');
-  inputs.forEach(function(inp,idx){
-    inp.addEventListener('input',function(e){
-      // Only allow digits
-      this.value=this.value.replace(/[^0-9]/g,'');
-      // Auto-advance to next input
-      if(this.value.length===1 && idx<inputs.length-1){
-        inputs[idx+1].focus();
-      }
-      // Auto-submit on last input
-      if(idx===inputs.length-1 && this.value.length===1){
-        doPinLogin();
-      }
-    });
-    inp.addEventListener('keydown',function(e){
-      // Handle backspace
-      if(e.key==='Backspace'){
-        if(this.value==='' && idx>0){
-          inputs[idx-1].value='';
-          inputs[idx-1].focus();
-        }
-      }
-      // Handle left/right arrows
-      if(e.key==='ArrowLeft' && idx>0){
-        inputs[idx-1].focus();
-      }
-      if(e.key==='ArrowRight' && idx<inputs.length-1){
-        inputs[idx+1].focus();
-      }
-    });
-    // Select content on focus (easier to replace)
-    inp.addEventListener('focus',function(){
-      setTimeout(function(){inp.select()},10);
-    });
-  });
+// PIN Login Functions (Simple & Robust)
+function pinMove(inp,n){
+  // Allow only digits
+  inp.value=inp.value.replace(/[^0-9]/g,'');
+  // Auto-advance to next input
+  if(inp.value.length===1 && n<4){
+    document.getElementById('pin'+(n+1)).focus();
+  }
+  // Auto-submit on last input
+  if(n===4 && inp.value.length===1){
+    doPinLogin();
+  }
+}
+function pinBack(e,inp,n){
+  if(e.key==='Backspace' && inp.value==='' && n>1){
+    var prev=document.getElementById('pin'+(n-1));
+    prev.value='';
+    prev.focus();
+  }
 }
 function getPin(){
   return document.getElementById('pin1').value+
@@ -453,7 +424,6 @@ function doPinLogin(){
     setTimeout(goMain,500);
   }else{
     toast('Invalid PIN');
-    // Clear PIN inputs
     for(var i=1;i<=4;i++)document.getElementById('pin'+i).value='';
     document.getElementById('pin1').focus();
   }
@@ -495,10 +465,8 @@ function getCoInfo(){return LS('companyInfo')||{}}
 function saveCoInfo(c){LS('companyInfo',c)}
 
 // ========== AUTH ==========
-function showLogin(){
-  setTimeout(initPinInputs,100);document.getElementById('login-form').style.display='block';document.getElementById('register-form').style.display='none'}
-function showRegister(){
-  setTimeout(initRegPinInputs,100);document.getElementById('login-form').style.display='none';document.getElementById('register-form').style.display='block'}
+function showLogin(){document.getElementById('login-form').style.display='block';document.getElementById('register-form').style.display='none'}
+function showRegister(){document.getElementById('login-form').style.display='none';document.getElementById('register-form').style.display='block'}
 
 function doLogin(){
   var u=document.getElementById('login-user').value.trim(),p=document.getElementById('login-pwd').value.trim();
