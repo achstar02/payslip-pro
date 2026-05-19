@@ -471,14 +471,7 @@ function doLogin(){
   CU=usr;LS('currentUser',usr);goMain();toast('Welcome, '+usr.name+'!');
 }
 
-function doRegister(){var u=document.getElementById('reg-user').value.trim(),pin=getRegPin(),n=document.getElementById('reg-name').value.trim();if(!u||pin.length!==4||!n){toast('Please fill all fields (4-digit PIN)');return}var users=JSON.parse(localStorage.getItem('users')||'[]');if(users.find(x=>x.username===u)){toast('Username already exists');return}users.push({username:u,name:n,role:'staff',pin:pin});localStorage.setItem('users',JSON.stringify(users));toast('Registered! Your PIN: '+pin);showLogin()}))return toast('Username exists');
-  users.push({username:u,password:p,name:n,role:'employee'});
-  LS('users',users);
-  var emps=getEmps();
-  emps.push({id:uid(),username:u,name:n,salary:getCfg().monthlySalary});
-  saveEmps(emps);
-  toast('Registered! Please login.');showLogin();
-}
+function doRegister(){var u=document.getElementById('reg-user').value.trim(),pin=getRegPin(),n=document.getElementById('reg-name').value.trim();if(!u||pin.length!==4||!n){toast('Please fill all fields (4-digit PIN)');return}var users=JSON.parse(localStorage.getItem('users')||'[]');if(users.find(function(x){return x.username===u})){toast('Username already exists');return}users.push({username:u,name:n,role:'staff',pin:pin});LS('users',users);toast('Registered! Your PIN is: '+pin);showLogin()}
 
 function logout(){
   CU=null;localStorage.removeItem('currentUser');
