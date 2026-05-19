@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>PaySlip Pro - Malaysia Attendance & Payroll</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f5f5;color:#333;font-size:14px}
+.container{max-width:800px;margin:0 auto;padding:20px;padding-bottom:110px}
+.card{background:#fff;border-radius:16px;padding:20px;margin-bottom:20px;box-shadow:0 2px 12px rgba(0,0,0,.08)}
+.btn-primary{background:linear-gradient(135deg,#4472C4,#5B8FEF);color:#fff;border:none;border-radius:12px;padding:12px 0;font-size:16px;width:100%;cursor:pointer}
+.btn-primary:active{transform:scale(.97)}
+.btn-secondary{background:#fff;color:#4472C4;border:2px solid #4472C4;border-radius:12px;padding:12px 0;font-size:16px;width:100%;cursor:pointer;margin-bottom:10px}
+.btn-danger{background:#fff;color:#F56C6C;border:2px solid #F56C6C;border-radius:12px;padding:10px 0;font-size:14px;width:100%;cursor:pointer}
+.btn-orange{background:linear-gradient(135deg,#E6A23C,#EEBA5E);color:#fff;border:none;border-radius:12px;padding:12px 0;font-size:16px;width:100%;cursor:pointer}
+.btn-green{background:linear-gradient(135deg,#67C23A,#85CE61);color:#fff;border:none;border-radius:12px;padding:8px 16px;font-size:13px;cursor:pointer}
+.btn-print{background:linear-gradient(135deg,#333,#555);color:#fff;border:none;border-radius:12px;padding:10px 0;font-size:15px;width:100%;cursor:pointer;margin-top:12px}
+.btn-sm{padding:8px 16px;font-size:14px;width:auto}
+.input-group{margin-bottom:16px}.input-label{font-size:13px;color:#666;margin-bottom:6px}
+.input-field{width:100%;padding:12px 16px;border:2px solid #e0e0e0;border-radius:12px;font-size:15px;outline:none;pointer-events:auto!important}
+.input-field:focus{border-color:#4472C4}
+.link-btn{color:#4472C4;cursor:pointer;font-size:13px;text-align:center;margin-top:12px}
+.tabbar{position:fixed;bottom:0;left:0;right:0;height:56px;background:#fff;display:flex!important;justify-content:space-around;align-items:center;box-shadow:0 -2px 12px rgba(0,0,0,.08);z-index:9999!important}
+.tabbar-item{display:flex;flex-direction:column;align-items:center;cursor:pointer;padding:6px;color:#999;user-select:none}
+.tabbar-item.active{color:#4472C4}
+.tabbar-icon{font-size:18px;margin-bottom:2px}
+.tabbar-text{font-size:10px}
+.page{display:none}.page.active{display:block}
+.toast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.75);color:#fff;padding:14px 28px;border-radius:12px;font-size:14px;z-index:9999;pointer-events:none;opacity:0;transition:opacity .3s}
+.toast.show{opacity:1}
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:2000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:.3s}
+.modal-overlay.show{opacity:1;pointer-events:auto}
+.modal{background:#fff;border-radius:16px;padding:24px;width:92%;max-width:440px;max-height:80vh;overflow-y:auto}
+.modal-title{font-size:17px;font-weight:600;margin-bottom:16px}
+.modal-close{float:right;cursor:pointer;font-size:20px;color:#999}
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600}
+.badge-warning{background:#fdf6ec;color:#E6A23C}
+.badge-danger{background:#fef0f0;color:#F56C6C}
+.badge-success{background:#f0f9eb;color:#67C23A}
+.badge-info{background:#f4f4f5;color:#909399}
+.badge-purple{background:#f0e9ff;color:#7B61FF}
+.reason-input{width:100%;padding:12px 16px;border:2px solid #e0e0e0;border-radius:12px;font-size:14px;outline:none;resize:vertical;min-height:80px;font-family:inherit}
+.reason-input:focus{border-color:#4472C4}
+
+/* PRINT STYLES */
+@media print{
+  body * {visibility:hidden}
+  #print-area, #print-area * {visibility:visible}
+  #print-area {position:absolute;left:0;top:0;width:100%;padding:20px;background:#fff}
+  .no-print{display:none!important}
+  .payslip{border:2px solid #333;border-radius:0;padding:30px;max-width:700px;margin:0 auto;font-size:13px}
+  .payslip-header{text-align:center;border-bottom:2px solid #333;padding-bottom:15px;margin-bottom:20px}
+  .payslip-header h1{font-size:22px;margin-bottom:4px}
+  .payslip-header p{font-size:12px;color:#666}
+  .payslip-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dotted #ccc}
+  .payslip-row.total{border-top:2px solid #333;border-bottom:none;font-weight:700;font-size:16px;padding-top:12px}
+  .payslip-section-title{font-weight:700;font-size:14px;margin-top:16px;margin-bottom:6px;color:#4472C4;border-bottom:1px solid #eee;padding-bottom:4px}
+  .payslip-sign{text-align:right;margin-top:24px;font-size:12px}
+}
+
+.payslip-preview{background:#fff;border:1px solid #ddd;border-radius:12px;padding:20px;margin-top:12px;max-width:600px;margin-left:auto;margin-right:auto}
+.pps-header{text-align:center;border-bottom:2px solid #4472C4;padding-bottom:12px;margin-bottom:16px}
+.pps-header h2{font-size:18px;color:#4472C4}
+.pps-header p{font-size:11px;color:#999}
+.pps-row{display:flex;justify-content:space-between;padding:5px 0;font-size:13px}
+.pps-row.tot{border-top:2px solid #4472C4;font-weight:700;font-size:15px;padding-top:8px;margin-top:8px;color:#4472C4}
+.pps-sect{font-weight:600;font-size:13px;margin-top:12px;margin-bottom:4px;color:#555;border-bottom:1px solid #eee;padding-bottom:3px}
+
+@media(max-width:480px){.container{padding:15px;padding-bottom:80px}}
+
+/* Login page fix - ensure inputs are always interactive */
+
+#login-form { position:relative !important; z-index:100 !important; }
+
+/* PIN Input Styles */
+.pin-input{width:56px;height:64px;text-align:center;font-size:28px;font-weight:700;border:2px solid #ddd;border-radius:12px;outline:none;transition:border-color .2s}
+.pin-input:focus{border-color:#4472C4;background:#f0f4ff}
+.pin-input:valid{border-color:#67C23A;background:#f0f9eb}
+</style>
+</head>
+<body>
+
+<!-- LOGIN PAGE -->
+<div id="page-login" class="page active">
+<div class="container" style="max-width:400px;margin-top:60px">
+  <div style="text-align:center;margin-bottom:28px">
+    <div style="font-size:52px;margin-bottom:8px">💰</div>
+    <div style="font-size:22px;font-weight:700;color:#4472C4">PaySlip Pro</div>
+    <div style="font-size:13px;color:#999;margin-top:4px">Malaysia Attendance & Payroll System</div>
+    <div style="font-size:11px;color:#E6A23C;margin-top:6px">✨ Print Payslips | EPF/SOCSO/EIS/PCB ✨</div>
+  </div>
+  <div class="card">
+    <div id="login-form">
+      <div style="text-align:center;margin-bottom:20px">
+        <div style="font-size:14px;color:#666;margin-bottom:16px">Enter your 4-digit PIN</div>
+        <div style="display:flex;justify-content:center;gap:12px;margin-bottom:24px">
+          <input type="tel" maxlength="1" class="pin-input" id="pin1" oninput="pinNext(1)" onkeydown="pinBack(event,1)" autofocus>
+          <input type="tel" maxlength="1" class="pin-input" id="pin2" oninput="pinNext(2)" onkeydown="pinBack(event,2)">
+          <input type="tel" maxlength="1" class="pin-input" id="pin3" oninput="pinNext(3)" onkeydown="pinBack(event,3)">
+          <input type="tel" maxlength="1" class="pin-input" id="pin4" oninput="pinNext(4)" onkeydown="pinBack(event,4)">
+        </div>
+      </div>
+      <button class="btn-primary" onclick="doPinLogin()">Login with PIN</button>
+      <div class="link-btn" onclick="showRegister()">No account? Register</div>
+      <div class="link-btn" style="color:#E6A23C;margin-top:4px" onclick="showForgotPwd()">Forgot PIN?</div>
+    </div>
+    <div id="register-form" style="display:none">
+      <div class="input-group"><input class="input-field" id="reg-user" placeholder="Username"></div>
+      <div class="input-group"><input class="input-field" id="reg-name" placeholder="Full Name"></div>
+      <div class="input-group">
+        <div style="font-size:13px;color:#666;margin-bottom:8px">Set 4-digit PIN</div>
+        <div style="display:flex;gap:8px">
+          <input type="tel" maxlength="1" class="pin-input" id="reg-pin1" oninput="regPinNext(1)" onkeydown="regPinBack(event,1)">
+          <input type="tel" maxlength="1" class="pin-input" id="reg-pin2" oninput="regPinNext(2)" onkeydown="regPinBack(event,2)">
+          <input type="tel" maxlength="1" class="pin-input" id="reg-pin3" oninput="regPinNext(3)" onkeydown="regPinBack(event,3)">
+          <input type="tel" maxlength="1" class="pin-input" id="reg-pin4" oninput="regPinNext(4)" onkeydown="regPinBack(event,4)">
+        </div>
+      </div>
+      <button class="btn-primary" onclick="doRegister()">Register</button>
+      <div class="link-btn" onclick="showLogin()">Back to Login</div>
+    </div>
+  </div>
+  <div style="text-align:center;margin-top:16px;font-size:11px;color:#bbb">PaySlip Pro v9.0 &copy; 2026</div>
+</div>
+</div>
+
+<!-- INDEX PAGE -->
+<div id="page-index" class="page">
+<div class="container">
+  <div class="card" style="padding:25px 20px">
+    <div style="display:flex;align-items:center;margin-bottom:20px">
+      <div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#4472C4,#5B8FEF);display:flex;align-items:center;justify-content:center;font-size:24px;color:#fff;margin-right:16px">👤</div>
+      <div>
+        <div style="font-size:18px;font-weight:600" id="i-name">My Attendance</div>
+        <div style="font-size:13px;color:#999;margin-top:2px" id="i-dept"></div>
+        <div style="font-size:11px;color:#4472C4;margin-top:4px;display:none" id="i-sup-badge">⭐ Supervisor</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div style="font-size:15px;font-weight:600;margin-bottom:16px">Today's Status</div>
+    <div style="display:flex;justify-content:space-between;margin-bottom:12px"><span style="font-size:13px;color:#666">Clock In</span><span style="font-size:15px;font-weight:600" id="i-in">--:--</span></div>
+    <div style="display:flex;justify-content:space-between;margin-bottom:12px"><span style="font-size:13px;color:#666">Clock Out</span><span style="font-size:15px;font-weight:600" id="i-out">--:--</span></div>
+    <div style="display:flex;justify-content:space-between"><span style="font-size:13px;color:#666">Status</span><span style="font-size:13px" id="i-status">--</span></div>
+  </div>
+  <div class="card">
+    <div style="font-size:15px;font-weight:600;margin-bottom:16px">This Month</div>
+    <div style="display:flex;justify-content:space-around;text-align:center">
+      <div><div style="font-size:24px;font-weight:700;color:#4472C4" id="i-days">0</div><div style="font-size:12px;color:#999">Days Worked</div></div>
+      <div><div style="font-size:24px;font-weight:700;color:#E6A23C" id="i-late">0</div><div style="font-size:12px;color:#999">Late</div></div>
+      <div><div style="font-size:24px;font-weight:700;color:#F56C6C" id="i-early">0</div><div style="font-size:12px;color:#999">Early Leave</div></div>
+    </div>
+  </div>
+  <button class="btn-secondary" style="margin-top:10px" onclick="logout()">Logout</button>
+  <!-- INLINE TABBAR (fallback) -->
+  <div id="inline-tabbar"></div>
+</div>
+</div>
+
+<!-- CLOCK PAGE -->
+<div id="page-clock" class="page">
+<div class="container">
+  <div class="card" style="text-align:center;padding:30px 20px">
+    <div style="font-size:14px;color:#999;margin-bottom:8px" id="c-date"></div>
+    <div style="font-size:48px;font-weight:700;color:#4472C4;margin-bottom:20px" id="c-time">--:--:--</div>
+    <button class="btn-primary" style="margin-bottom:12px;font-size:18px;padding:16px 0" id="btn-clock" onclick="doClock()">Clock In</button>
+    <div style="font-size:13px;color:#999;margin-top:12px" id="c-status"></div>
+  </div>
+  <div class="card">
+    <div style="font-size:15px;font-weight:600;margin-bottom:16px">Today's Record</div>
+    <div style="display:flex;justify-content:space-between;margin-bottom:12px"><span style="font-size:13px;color:#666">Clock In</span><span id="c-in">--:--</span></div>
+    <div style="display:flex;justify-content:space-between"><span style="font-size:13px;color:#666">Clock Out</span><span id="c-out">--:--</span></div>
+  </div>
+</div>
+</div>
+
+<!-- RECORDS PAGE -->
+<div id="page-records" class="page">
+<div class="container">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+    <h3 style="font-size:17px;font-weight:600">Records</h3>
+    <div style="display:flex;gap:6px">
+      <span style="cursor:pointer;padding:4px 8px;background:#fff;border-radius:8px;font-size:14px" onclick="recNav(-1)">◀</span>
+      <span id="rec-month-label" style="font-size:14px;padding:4px 8px">May 2026</span>
+      <span style="cursor:pointer;padding:4px 8px;background:#fff;border-radius:8px;font-size:14px" onclick="recNav(1)">▶</span>
+    </div>
+  </div>
+  <div id="records-list"></div>
+</div>
+</div>
+
+<!-- SALARY PAGE with PAYSLLIP PRINT -->
+<div id="page-salary" class="page">
+<div class="container no-print">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+    <h3 style="font-size:17px;font-weight:600">Salary & Payslip</h3>
+    <div style="display:flex;gap:6px">
+      <span style="cursor:pointer;padding:4px 8px;background:#fff;border-radius:8px;font-size:14px" onclick="salNav(-1)">◀</span>
+      <span id="sal-month-label" style="font-size:14px;padding:4px 8px">May 2026</span>
+      <span style="cursor:pointer;padding:4px 8px;background:#fff;border-radius:8px;font-size:14px" onclick="salNav(1)">▶</span>
+    </div>
+  </div>
+  <div id="salary-result"></div>
+  <!-- PAYSLLIP PREVIEW -->
+  <div id="payslip-container" style="margin-top:16px;display:none">
+    <div style="font-size:15px;font-weight:600;margin-bottom:12px">📄 Payslip Preview</div>
+    <div id="payslip-preview" class="payslip-preview"></div>
+    <button class="btn-print no-print" onclick="printPayslip()">🖨️ Print Payslip</button>
+  </div>
+  <div id="all-salary-btn" style="display:none;margin-top:16px">
+    <button class="btn-orange" onclick="showAllSalary()" style="width:100%">View All Employees Salary</button>
+  </div>
+  <div id="all-salary-content" style="margin-top:16px"></div>
+</div>
+
+<!-- PRINT AREA (hidden on screen, visible when printing) -->
+<div id="print-area" style="display:none"></div>
+</div>
+
+<!-- PROFILE/SETTINGS PAGE -->
+<div id="page-profile" class="page">
+<div class="container">
+  <div style="font-size:17px;font-weight:600;margin-bottom:16px">Settings</div>
+  <div class="card">
+    <div style="font-size:15px;font-weight:600;margin-bottom:16px">Company Info (on Payslip)</div>
+    <div class="input-group"><div class="input-label">Company Name</div><input class="input-field" id="co-name" placeholder="Your Company Sdn Bhd"></div>
+    <div class="input-group"><div class="input-label">Company Address</div><textarea class="input-field" id="co-address" rows="2" placeholder="Address"></textarea></div>
+    <div class="input-group"><div class="input-label">Company Registration No.</div><input class="input-field" id="co-reg" placeholder="e.g. 201901000XXX"></div>
+  </div>
+  <div class="card">
+    <div style="font-size:15px;font-weight:600;margin-bottom:16px">My Information</div>
+    <div class="input-group"><div class="input-label">Name</div><input class="input-field" id="pf-name"></div>
+    <div class="input-group"><div class="input-label">Department</div><input class="input-field" id="pf-dept"></div>
+    <div class="input-group"><div class="input-label">Phone</div><input class="input-field" id="pf-phone"></div>
+    <div class="input-group"><div class="input-label">ID/EPF No.</div><input class="input-field" id="pf-epf-no" placeholder="For payslip"></div>
+    <div class="input-group"><div class="input-label">Tax No. (PCB)</div><input class="input-field" id="pf-tax-no" placeholder="For payslip"></div>
+    <div class="input-group"><div class="input-label">Position / Designation</div><input class="input-field" id="pf-position" placeholder="For payslip"></div>
+    <div class="input-group"><div class="input-label">Join Date</div><input class="input-field" id="pf-join" placeholder="YYYY-MM-DD"></div>
+    <button class="btn-primary" onclick="saveProfile()">Save My Info</button>
+  </div>
+  <div class="card" id="sup-emp-manage" style="display:none">
+    <div style="font-size:15px;font-weight:600;margin-bottom:16px">Employee Management</div>
+    <div id="emp-list-content"></div>
+    <button class="btn-primary btn-sm" style="margin-top:12px;width:100%" onclick="showEmpForm()">+ Add Employee</button>
+  </div>
+  <div class="card" id="sup-loan-manage" style="display:none">
+    <div style="font-size:15px;font-weight:600;margin-bottom:16px">Loan Management</div>
+    <button class="btn-orange btn-sm" style="width:100%" onclick="showLoanMgmt()">Manage Loans</button>
+  </div>
+  <div class="card" id="sup-pwd-reset" style="display:none">
+    <div style="font-size:15px;font-weight:600;margin-bottom:16px">🔑 Password Management</div>
+    <button class="btn-primary btn-sm" style="width:100%" onclick="showResetPwd()">🔄 Reset Employee Password</button>
+    <div id="pending-reset-count" style="font-size:12px;color:#E6A23C;margin-top:6px;text-align:center"></div>
+  </div>
+  <div class="card" id="sup-config" style="display:none">
+    <div style="font-size:15px;font-weight:600;margin-bottom:16px">Salary Config</div>
+    <div class="input-group"><div class="input-label">Default Monthly Salary (RM)</div><input class="input-field" type="number" id="cfg-salary"></div>
+    <div class="input-group"><div class="input-label">Late Penalty (RM)</div><input class="input-field" type="number" id="cfg-late"></div>
+    <div class="input-group"><div class="input-label">Early Leave Penalty (RM)</div><input class="input-field" type="number" id="cfg-early"></div>
+    <div class="input-group"><div class="input-label">OT Rate per Hour (RM)</div><input class="input-field" type="number" id="cfg-ot"></div>
+    <div class="input-group"><div class="input-label">Allowance (RM/month)</div><input class="input-field" type="number" id="cfg-allowance" value="0"></div>
+    <div class="input-group"><div class="input-label">Bonus (RM) - one-time</div><input class="input-field" type="number" id="cfg-bonus" value="0"></div>
+    <button class="btn-primary" onclick="saveConfig()">Save Config</button>
+  </div>
+  <!-- DATA MANAGEMENT -->
+  <div class="card">
+    <div style="font-size:15px;font-weight:600;margin-bottom:16px">Data Management</div>
+    <button class="btn-secondary btn-sm" style="width:100%;margin-bottom:8px" onclick="exportData()">📥 Export All Data (JSON)</button>
+    <button class="btn-danger btn-sm" style="width:100%" onclick="if(confirm('Clear ALL data?')){localStorage.clear();location.reload()}">🗑️ Clear All Data</button>
+  </div>
+  <button class="btn-secondary" style="margin-top:10px" onclick="logout()">Logout</button>
+</div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="modal-emp-form"><div class="modal"><span class="modal-close" onclick="closeModal('emp-form')">&times;</span>
+<div class="modal-title" id="emp-form-title">Add Employee</div>
+<div class="input-group"><div class="input-label">Name</div><input class="input-field" id="ef-name"></div>
+<div class="input-group"><div class="input-label">Department</div><input class="input-field" id="ef-dept"></div>
+<div class="input-group"><div class="input-label">Phone</div><input class="input-field" id="ef-phone"></div>
+<div class="input-group"><div class="input-label">Salary (RM)</div><input class="input-field" type="number" id="ef-salary"></div>
+<div class="input-group"><div class="input-label">EPF Number</div><input class="input-field" id="ef-epf"></div>
+<div class="input-group"><div class="input-label">Position</div><input class="input-field" id="ef-pos"></div>
+<div class="input-group"><div class="input-label">Join Date</div><input class="input-field" id="ef-join" placeholder="YYYY-MM-DD"></div>
+<input type="hidden" id="ef-edit-id">
+<button class="btn-primary" onclick="saveEmp()">Save</button>
+</div></div>
+
+<!-- EDIT EMPLOYEE MODAL -->
+<div class="modal-overlay" id="modal-edit"><div class="modal"><span class="modal-close" onclick="closeModal('edit')">&times;</span>
+<div class="modal-title">Edit Employee</div>
+<div class="input-group"><div class="input-label">Name *</div><input class="input-field" id="edit-emp-name" placeholder="Full name"></div>
+<div class="input-group"><div class="input-label">Department</div><input class="input-field" id="edit-emp-dept" placeholder="e.g. Store / Kitchen"></div>
+<div class="input-group"><div class="input-label">Salary (RM) *</div><input class="input-field" id="edit-emp-salary" type="number" placeholder="Monthly salary"></div>
+<div class="input-group"><div class="input-label">EPF Number (KWSP)</div><input class="input-field" id="edit-emp-epf" placeholder="e.g. 1234567890"></div>
+<div class="input-group"><div class="input-label">Tax Number (PCB)</div><input class="input-field" id="edit-emp-tax" placeholder="Tax reference no."></div>
+<div class="input-group"><div class="input-label">Position</div><input class="input-field" id="edit-emp-pos" placeholder="e.g. Cashier, Cook"></div>
+<div class="input-group"><div class="input-label">Join Date</div><input class="input-field" id="edit-emp-join" type="date">
+<button class="btn-primary" style="margin-top:16px" id="edit-save-btn">Save Changes</button>
+</div></div>
+
+<div class="modal-overlay" id="modal-loan"><div class="modal"><span class="modal-close" onclick="closeModal('loan')">&times;</span>
+<div class="modal-title">Loan Management</div>
+<div style="font-size:13px;color:#666;margin-bottom:12px">Employee: <strong id="loan-emp-name">-</strong></div>
+<div id="loan-list"></div>
+<div style="margin-top:16px;padding-top:12px;border-top:1px solid #eee">
+  <div class="input-group"><div class="input-label">Amount (RM)</div><input class="input-field" type="number" id="loan-amount"></div>
+  <div class="input-group"><div class="input-label">Note</div><input class="input-field" id="loan-note"></div>
+  <button class="btn-primary btn-sm" style="width:100%" onclick="addLoan()">Add Loan</button>
+</div>
+</div></div>
+
+<!-- FORGOT PASSWORD MODAL -->
+<div class="modal-overlay" id="modal-forgot"><div class="modal"><span class="modal-close" onclick="closeModal('forgot')">&times;</span>
+<div class="modal-title">Reset Password</div>
+<div id="forgot-step1">
+  <div style="font-size:13px;color:#666;margin-bottom:12px">Enter your username. Only a supervisor can reset your password.</div>
+  <div class="input-group"><input class="input-field" id="forgot-user" placeholder="Your username"></div>
+  <button class="btn-primary" onclick="checkForgotUser()">Submit</button>
+  <div class="link-btn" onclick="closeModal('forgot')">Back to Login</div>
+</div>
+<div id="forgot-step2" style="display:none">
+  <div style="font-size:13px;color:#E6A23C;margin-bottom:12px;padding:10px;background:#fdf6ec;border-radius:8px">⚠️ Password reset request submitted! Please ask the supervisor (admin) to approve.</div>
+  <div style="font-size:13px;color:#666">Username: <strong id="forgot-uname"></strong></div>
+  <button class="btn-secondary" onclick="closeModal('forgot');showLogin()">Back to Login</button>
+</div>
+</div></div>
+
+<!-- RESET PASSWORD MODAL (SUPERVISOR) -->
+<div class="modal-overlay" id="modal-reset-pwd"><div class="modal"><span class="modal-close" onclick="closeModal('reset-pwd')">&times;</span>
+<div class="modal-title">🔑 Reset Employee Password</div>
+<div id="reset-pwd-list"></div>
+</div></div>
+
+<div class="modal-overlay" id="modal-reason"><div class="modal"><span class="modal-close" onclick="closeModal('reason')">&times;</span>
+<div class="modal-title" id="reason-title">Reason</div>
+<textarea class="reason-input" id="reason-text" placeholder="Please enter reason (optional)"></textarea>
+<div style="display:flex;gap:10px;margin-top:16px">
+<button class="btn-secondary" style="flex:1" onclick="skipReason()">Skip</button>
+<button class="btn-primary" style="flex:1" onclick="submitReason()">Submit</button>
+</div>
+</div></div>
+
+<div class="modal-overlay" id="modal-all-salary"><div class="modal"><span class="modal-close" onclick="closeModal('all-salary')">&times;</span>
+<div class="modal-title">All Employees Salary</div>
+<div id="all-sal-content"></div>
+</div></div>
+
+<div class="modal-overlay" id="modal-print-select"><div class="modal"><span class="modal-close" onclick="closeModal('print-select')">&times;</span>
+<div class="modal-title">Print Payslip for Employee</div>
+<div id="print-emp-list"></div>
+</div></div>
+
+<!-- TABBAR -->
+<div class="tabbar" id="main-tabbar" style="position:fixed;bottom:0;left:0;right:0;height:56px;background:#fff;display:flex;justify-content:space-around;align-items:center;box-shadow:0 -2px 12px rgba(0,0,0,.08);z-index:9999">
+<div class="tabbar-item active" onclick="go('index')" id="tab-index"><div class="tabbar-icon">🏠</div><div class="tabbar-text">Home</div></div>
+<div class="tabbar-item" onclick="go('clock')" id="tab-clock"><div class="tabbar-icon">⏰</div><div class="tabbar-text">Clock</div></div>
+<div class="tabbar-item" onclick="go('records')" id="tab-records"><div class="tabbar-icon">📋</div><div class="tabbar-text">Records</div></div>
+<div class="tabbar-item" onclick="go('salary')" id="tab-salary"><div class="tabbar-icon">💰</div><div class="tabbar-text">Salary</div></div>
+<div class="tabbar-item" onclick="go('profile')" id="tab-profile"><div class="tabbar-icon">⚙️</div><div class="tabbar-text">Settings</div></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+
+function regPinNext(n){
+  var inp=document.getElementById('reg-pin'+n);
+  if(inp.value.length===1 && n<4){
+    document.getElementById('reg-pin'+(n+1)).focus();
+  }
+}
+function regPinBack(e,n){
+  if(e.key==='Backspace' && n>1){
+    var prev=document.getElementById('reg-pin'+(n-1));
+    if(document.getElementById('reg-pin'+n).value===''){
+      prev.value='';
+      prev.focus();
+    }
+  }
+}
+function getRegPin(){
+  return document.getElementById('reg-pin1').value+
+         document.getElementById('reg-pin2').value+
+         document.getElementById('reg-pin3').value+
+         document.getElementById('reg-pin4').value;
+}
+
+
+// PIN Login Functions
+function pinNext(n){
+  var inp=document.getElementById('pin'+n);
+  if(inp.value.length===1 && n<4){
+    document.getElementById('pin'+(n+1)).focus();
+  }
+  if(n===4 && inp.value.length===1){
+    doPinLogin();
+  }
+}
+function pinBack(e,n){
+  if(e.key==='Backspace' && n>1){
+    var prev=document.getElementById('pin'+(n-1));
+    if(document.getElementById('pin'+n).value===''){
+      prev.value='';
+      prev.focus();
+    }
+  }
+}
+function getPin(){
+  return document.getElementById('pin1').value+
+         document.getElementById('pin2').value+
+         document.getElementById('pin3').value+
+         document.getElementById('pin4').value;
+}
+function doPinLogin(){
+  var pin=getPin();
+  if(pin.length!==4){toast('Please enter 4-digit PIN');return;}
+  var users=JSON.parse(localStorage.getItem('users')||'[]');
+  var found=users.find(u=>u.pin===pin);
+  if(found){
+    currentUser=found.username;
+    localStorage.setItem('currentUser',currentUser);
+    toast('Welcome, '+found.name);
+    setTimeout(goMain,500);
+  }else{
+    toast('Invalid PIN');
+    // Clear PIN inputs
+    for(var i=1;i<=4;i++)document.getElementById('pin'+i).value='';
+    document.getElementById('pin1').focus();
+  }
+}
+
+// ========== DATA STORE ==========
+var CU = null;
+var _pendingClockAction = null;
+var _currentSalaryData = null; // store for printing
+
+function LS(k,v){if(v!==undefined)return localStorage.setItem(k,JSON.stringify(v));try{return JSON.parse(localStorage.getItem(k))||null}catch(e){return null}}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,8)}
+function fmt(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function fmtTime(d){return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')+':'+String(d.getSeconds()).padStart(2,'0')}
+function toast(m){var e=document.getElementById('toast');e.textContent=m;e.classList.add('show');setTimeout(function(){e.classList.remove('show')},1500)}
+
+// Month name
+function monthName(m){return['January','February','March','April','May','June','July','August','September','October','November','December'][m-1]}
+function monthShort(m){return['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][m-1]}
+
+function initDB(){
+  if(!LS('users'))LS('users',[{username:'supervisor',password:'admin',name:'Supervisor',role:'supervisor'}]);
+  if(!LS('config'))LS('config',{monthlySalary:3500,latePenalty:50,earlyPenalty:30,otRate:15,allowance:0,bonus:0});
+  if(!LS('companyInfo'))LS('companyInfo',{name:'',address:'',regNo:''});
+}
+
+function getRecs(){return LS('attendance_all')||[]}
+function saveRecs(r){LS('attendance_all',r)}
+function myRecs(){return (LS('attendance_all')||[]).filter(function(x){return x.username===CU.username})}
+function getLoans(eid){return LS('loans_'+eid)||[]}
+function saveLoans(eid,l){LS('loans_'+eid,l)}
+function getEmps(){return LS('employees')||[]}
+function saveEmps(e){LS('employees',e)}
+function getCfg(){return LS('config')||{}}
+function saveCfg(c){LS('config',c)}
+function getProfiles(){return LS('profiles')||{}}
+function saveProfiles(p){LS('profiles',p)}
+function getCoInfo(){return LS('companyInfo')||{}}
+function saveCoInfo(c){LS('companyInfo',c)}
+
+// ========== AUTH ==========
+function showLogin(){document.getElementById('login-form').style.display='block';document.getElementById('register-form').style.display='none'}
+function showRegister(){document.getElementById('login-form').style.display='none';document.getElementById('register-form').style.display='block'}
+
+function doLogin(){
+  var u=document.getElementById('login-user').value.trim(),p=document.getElementById('login-pwd').value.trim();
+  if(!u||!p)return toast('All fields required');
+  var users=LS('users'),usr=users.find(function(x){return x.username===u&&x.password===p});
+  if(!usr)return toast('Wrong username/password');
+  CU=usr;LS('currentUser',usr);goMain();toast('Welcome, '+usr.name+'!');
+}
+
+function doRegister(){var u=document.getElementById('reg-user').value.trim(),pin=getRegPin(),n=document.getElementById('reg-name').value.trim();if(!u||pin.length!==4||!n){toast('Please fill all fields (4-digit PIN)');return}var users=JSON.parse(localStorage.getItem('users')||'[]');if(users.find(x=>x.username===u)){toast('Username already exists');return}users.push({username:u,name:n,role:'staff',pin:pin});localStorage.setItem('users',JSON.stringify(users));toast('Registered! Your PIN: '+pin);showLogin()}))return toast('Username exists');
+  users.push({username:u,password:p,name:n,role:'employee'});
+  LS('users',users);
+  var emps=getEmps();
+  emps.push({id:uid(),username:u,name:n,salary:getCfg().monthlySalary});
+  saveEmps(emps);
+  toast('Registered! Please login.');showLogin();
+}
+
+function logout(){
+  CU=null;localStorage.removeItem('currentUser');
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
+  document.getElementById('page-login').classList.add('active');
+}
+
+// ========== FORGOT PASSWORD ==========
+function showForgotPwd(){document.getElementById('forgot-step1').style.display='block';document.getElementById('forgot-step2').style.display='none';document.getElementById('forgot-user').value='';document.getElementById('modal-forgot').classList.add('show')}
+function checkForgotUser(){
+  var u=document.getElementById('forgot-user').value.trim();
+  if(!u)return toast('Enter your username');
+  var users=LS('users');
+  if(!users.find(function(x){return x.username===u}))return toast('Username not found');
+  // Store reset request
+  var reqs=LS('pwdResetRequests')||[];
+  if(!reqs.find(function(r){return r.username===u&&r.status==='pending'})){reqs.push({username:u,status:'pending',time:new Date().toISOString()});LS('pwdResetRequests',reqs)}
+  document.getElementById('forgot-uname').textContent=u;
+  document.getElementById('forgot-step1').style.display='none';
+  document.getElementById('forgot-step2').style.display='block';
+}
+
+// ========== SUPERVISOR RESET PASSWORD ==========
+function showResetPwd(){
+  if(!isSup())return;
+  var users=LS('users'),reqs=LS('pwdResetRequests')||[],html='';
+  var pending=reqs.filter(function(r){return r.status==='pending'});
+  if(pending.length===0){html='<div style="font-size:13px;color:#999;text-align:center;padding:20px">No pending password reset requests.</div>'}
+  else{
+    html='<div style="font-size:13px;color:#E6A23C;margin-bottom:12px">'+pending.length+' pending request(s):</div>';
+    pending.forEach(function(r){
+      var usr=users.find(function(x){return x.username===r.username});
+      html+='<div style="padding:10px;background:#f5f5f5;border-radius:8px;margin-bottom:8px">';
+      html+='<div style="font-weight:600;margin-bottom:6px">'+(usr?usr.name:r.username)+'</div>';
+      html+='<div style="font-size:12px;color:#666;margin-bottom:8px">@'+r.username+'</div>';
+      html+='<div class="input-group" style="margin-bottom:8px"><input class="input-field" id="rpwd-'+r.username+'" type="password" placeholder="New password"></div>';
+      html+='<button class="btn-primary btn-sm" onclick="resetPwd(\''+r.username+'\')">✅ Reset Password</button>';
+      html+='<button class="btn-danger btn-sm" style="margin-left:8px" onclick="dismissPwdReq(\''+r.username+'\')">Dismiss</button>';
+      html+='</div>';
+    });
+  }
+  // Also show all employees for direct reset
+  html+='<hr style="margin:16px 0;border:none;border-top:1px solid #eee"><div style="font-size:14px;font-weight:600;margin-bottom:10px">All Employees (direct reset):</div>';
+  users.filter(function(x){return x.role!=='supervisor'}).forEach(function(u){
+    html+='<div style="display:flex;align-items:center;padding:8px;background:#fafafa;border-radius:8px;margin-bottom:6px">';
+    html+='<div style="flex:1;font-size:13px"><strong>'+u.name+'</strong> <span style="color:#999;font-size:11px">@'+u.username+'</span></div>';
+    html+='<input class="input-field" id="drpwd-'+u.username+'" type="password" placeholder="New pwd" style="width:120px;padding:8px">';
+    html+='<button class="btn-green btn-sm" style="margin-left:6px" onclick="directResetPwd(\''+u.username+'\')">Reset</button>';
+    html+='</div>';
+  });
+  document.getElementById('reset-pwd-list').innerHTML=html;
+  document.getElementById('modal-reset-pwd').classList.add('show');
+}
+function resetPwd(uname){
+  var pwd=document.getElementById('rpwd-'+uname).value;if(!pwd||pwd.length<3){toast('Min 3 characters');return}
+  var users=LS('users'),idx=users.findIndex(function(x){return x.username===uname});if(idx<0)return;
+  users[idx].password=pwd;LS('users',users);
+  var reqs=LS('pwdResetRequests')||[];var ri=reqs.findIndex(function(r){return r.username===uname&&r.status==='pending'});if(ri>=0){reqs[ri].status='done';LS('pwdResetRequests',reqs)}
+  toast('Password reset for @'+uname);showResetPwd();
+}
+function dismissPwdReq(uname){
+  var reqs=LS('pwdResetRequests')||[];var ri=reqs.findIndex(function(r){return r.username===uname&&r.status==='pending'});if(ri>=0){reqs[ri].status='dismissed';LS('pwdResetRequests',reqs)}
+  showResetPwd();
+}
+function directResetPwd(uname){
+  var pwd=document.getElementById('drpwd-'+uname).value;if(!pwd||pwd.length<3){toast('Min 3 characters');return}
+  var users=LS('users'),idx=users.findIndex(function(x){return x.username===uname});if(idx<0)return;
+  users[idx].password=pwd;LS('users',users);
+  toast('Password changed for @'+uname);showResetPwd();
+}
+
+// ========== NAVIGATION ==========
+function go(page){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
+  document.getElementById('page-'+page).classList.add('active');
+  document.querySelectorAll('.tabbar-item').forEach(function(t){t.classList.remove('active')});
+  document.getElementById('tab-'+page).classList.add('active');
+  if(page==='index')loadIndex();
+  if(page==='clock')loadClock();
+  if(page==='records')loadRecords();
+  if(page==='salary')loadSalary();
+  if(page==='profile')loadProfile();
+  renderInlineNav(page);
+}
+
+function renderInlineNav(active){
+  var items=[['index','🏠 Home'],['clock','⏰ Clock'],['records','📋 Records'],['salary','💰 Salary'],['profile','⚙️ Settings']];
+  var html='<div style="display:flex!important;justify-content:space-around;margin-top:16px;padding:12px;background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.08)">';
+  items.forEach(function(it){
+    var c=it[0]===active?'color:#4472C4;font-weight:600':'color:#999';
+    html+='<div style="text-align:center;cursor:pointer;padding:8px 12px;font-size:13px;'+c+'" onclick="go(\''+it[0]+'\')">'+it[1]+'</div>';
+  });
+  html+='</div>';
+  var el=document.getElementById('inline-tabbar');
+  if(el)el.innerHTML=html;
+}
+
+function goMain(){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
+  document.getElementById('page-index').classList.add('active');
+  document.querySelectorAll('.tabbar-item').forEach(function(t){t.classList.remove('active')});
+  document.getElementById('tab-index').classList.add('active');
+  loadIndex();
+  var isSup=CU&&CU.role==='supervisor';
+  document.getElementById('sup-emp-manage').style.display=isSup?'block':'none';
+  document.getElementById('sup-loan-manage').style.display=isSup?'block':'none';
+  document.getElementById('sup-config').style.display=isSup?'block':'none';
+  document.getElementById('sup-pwd-reset').style.display=isSup?'block':'none';
+  var reqs=LS('pwdResetRequests')||[];
+  var pending=reqs.filter(function(r){return r.status==='pending'});
+  document.getElementById('pending-reset-count').textContent=pending.length>0?pending.length+' pending reset request(s)':'';
+  document.getElementById('all-salary-btn').style.display=isSup?'block':'none';
+  renderInlineNav('index');
+}
+
+// ========== INDEX ==========
+function loadIndex(){
+  if(!CU)return;
+  var prof=getProfiles()[CU.username]||{};
+  document.getElementById('i-name').textContent=prof.name||CU.name||CU.username;
+  document.getElementById('i-dept').textContent=prof.department||'';
+  document.getElementById('i-sup-badge').style.display=(CU.role==='supervisor')?'inline':'none';
+  var today=fmt(new Date()),recs=myRecs(),todayRec=null;
+  for(var i=recs.length-1;i>=0;i--)if(recs[i].date===today){todayRec=recs[i];break;}
+  document.getElementById('i-in').textContent=todayRec&&todayRec.clockIn?todayRec.clockIn.substring(0,5):'--:--';
+  document.getElementById('i-out').textContent=todayRec&&todayRec.clockOut?todayRec.clockOut.substring(0,5):'--:--';
+  var st=[];
+  if(todayRec&&todayRec.late)st.push('Late');
+  if(todayRec&&todayRec.early)st.push('Early Leave');
+  if(st.length===0&&todayRec)st.push('Normal');
+  document.getElementById('i-status').textContent=st.join(', ')||'--';
+  var now=new Date(),y=now.getFullYear(),m=now.getMonth()+1,prefix=y+'-'+String(m).padStart(2,'0');
+  var days=0,lateC=0,earlyC=0;
+  recs.forEach(function(r){
+    if(r.date&&r.date.startsWith(prefix)&&r.clockIn&&r.clockOut){days++}
+    if(r.date&&r.date.startsWith(prefix)&&r.late)lateC++;
+    if(r.date&&r.date.startsWith(prefix)&&r.early)earlyC++;
+  });
+  document.getElementById('i-days').textContent=days;
+  document.getElementById('i-late').textContent=lateC;
+  document.getElementById('i-early').textContent=earlyC;
+}
+
+// ========== CLOCK ==========
+var clockTimer=null;
+function loadClock(){
+  if(clockTimer)clearInterval(clockTimer);
+  clockTimer=setInterval(function(){
+    var n=new Date();
+    document.getElementById('c-time').textContent=
+      String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0')+':'+String(n.getSeconds()).padStart(2,'0');
+  },1000);
+  document.getElementById('c-date').textContent=fmt(new Date());
+  updateClockStatus();
+}
+
+function updateClockStatus(){
+  var today=fmt(new Date()),recs=getRecs(),rec=null;
+  for(var i=recs.length-1;i>=0;i--)if(recs[i].date===today){rec=recs[i];break};
+  var btn=document.getElementById('btn-clock');
+  if(!rec){btn.textContent='Clock In';btn.onclick=function(){_pendingClockAction='in';doClockIn()}}
+  else if(rec&&!rec.clockOut){btn.textContent='Clock Out';btn.onclick=function(){_pendingClockAction='out';doClockOut()}}
+  else{btn.textContent='Done Today';btn.onclick=function(){};btn.disabled=true;btn.style.opacity='.5'}
+  document.getElementById('c-in').textContent=rec&&rec.clockIn?rec.clockIn.substring(0,5):'--:--';
+  document.getElementById('c-out').textContent=rec&&rec.clockOut?rec.clockOut.substring(0,5):'--:--';
+}
+
+function doClockIn(){
+  var now=new Date(),h=now.getHours(),m=now.getMinutes();
+  var isLate=(h>=9||(h===8&&m>30));
+  if(isLate){
+    document.getElementById('reason-title').textContent='You are late! Reason?';
+    document.getElementById('reason-text').value='';
+    document.getElementById('modal-reason').classList.add('show');
+  }else{finishClockIn('')}
+}
+
+function finishClockIn(reason){
+  closeModal('reason');
+  var now=new Date(),allRecs=getRecs();
+  allRecs.push({username:CU.username,date:fmt(now),clockIn:fmtTime(now),clockOut:null,
+    late:(now.getHours()>8||(now.getHours()===8&&now.getMinutes()>30))?1:0,
+    early:0,lateReason:reason||'',earlyReason:''});
+  saveRecs(allRecs);
+  toast('Clocked In at '+fmtTime(now).substring(0,5));
+  setTimeout(loadClock,500);setTimeout(loadIndex,500);
+}
+
+function doClockOut(){
+  var now=new Date(),h=now.getHours(),m=now.getMinutes();
+  var isEarly=(h<17||(h===17&&m<30));
+  if(isEarly){
+    document.getElementById('reason-title').textContent='Leaving early! Reason?';
+    document.getElementById('reason-text').value='';
+    document.getElementById('modal-reason').classList.add('show');
+  }else{finishClockOut('')}
+}
+
+function finishClockOut(reason){
+  closeModal('reason');
+  var now=new Date(),allRecs=getRecs(),today=fmt(now);
+  for(var i=allRecs.length-1;i>=0;i--){
+    if(allRecs[i].date===today&&allRecs[i].username===CU.username&&!allRecs[i].clockOut){
+      allRecs[i].clockOut=fmtTime(now);
+      allRecs[i].early=(now.getHours()<17||(now.getHours()===17&&now.getMinutes()<30))?1:0;
+      allRecs[i].earlyReason=reason||'';
+      break;
+    }
+  }
+  saveRecs(allRecs);
+  toast('Clocked Out at '+fmtTime(now).substring(0,5));
+  setTimeout(loadClock,500);setTimeout(loadIndex,500);
+}
+
+function skipReason(){closeModal('reason');if(_pendingClockAction==='in')finishClockIn('');else finishClockOut('')}
+function submitReason(){var r=document.getElementById('reason-text').value.trim();closeModal('reason');if(_pendingClockAction==='in')finishClockIn(r);else finishClockOut(r)}
+function doClock(){}
+
+// ========== RECORDS ==========
+var recYear=new Date().getFullYear(),recMonth=new Date().getMonth()+1;
+function loadRecords(){
+  var recs=myRecs(),prefix=recYear+'-'+String(recMonth).padStart(2,'0');
+  var monthRecs=recs.filter(function(x){return x.date&&x.date.startsWith(prefix)});
+  monthRecs.sort(function(a,b){return b.date.localeCompare(a.date)});
+  document.getElementById('rec-month-label').textContent=monthShort(recMonth)+' '+recYear;
+  var html='';
+  if(monthRecs.length===0)html='<div style="text-align:center;color:#999;padding:40px 0">No records this month</div>';
+  else monthRecs.forEach(function(rec){
+    var lb=rec.late?'<span class="badge badge-warning">Late</span>':'';
+    var eb=rec.early?'<span class="badge badge-danger">Early</span>':'';
+    var rh='';
+    if(rec.lateReason)rh+='<div style="font-size:11px;color:#E6A23C;margin-top:4px">Late: '+rec.lateReason+'</div>';
+    if(rec.earlyReason)rh+='<div style="font-size:11px;color:#F56C6C;margin-top:4px">Early: '+rec.earlyReason+'</div>';
+    html+='<div class="card" style="padding:16px;margin-bottom:12px">'+
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span style="font-weight:600">'+rec.date+'</span><span>'+lb+' '+eb+'</span></div>'+
+      '<div style="display:flex;gap:16px;font-size:13px"><span>IN: '+(rec.clockIn?rec.clockIn.substring(0,5):'--:--')+'</span><span>OUT: '+(rec.clockOut?rec.clockOut.substring(0,5):'--:--')+'</span></div>'+rh+
+    '</div>';
+  });
+  document.getElementById('records-list').innerHTML=html;
+}
+function recNav(d){recMonth+=d;if(recMonth>12){recMonth=1;recYear++}if(recMonth<1){recMonth=12;recYear--}loadRecords()}
+
+// ========== SALARY + PAYSLLIP ==========
+var salYear=new Date().getFullYear(),salMonth=new Date().getMonth()+1;
+
+function calcSalaryForUser(username, empObj){
+  var cfg=getCfg(),allRecs=getRecs(),prefix=salYear+'-'+String(salMonth).padStart(2,'0');
+  var erecs=allRecs.filter(function(x){return x.username===username});
+  var monthRecs=erecs.filter(function(x){return x.date&&x.date.startsWith(prefix)});
+  var daysWorked=monthRecs.filter(function(x){return x.clockIn&&x.clockOut}).length;
+  var lateCount=monthRecs.filter(function(x){return x.late}).length;
+  var earlyCount=monthRecs.filter(function(x){return x.early}).length;
+  var totalHours=0,otHours=0;
+  monthRecs.forEach(function(r){
+    if(r.clockIn&&r.clockOut){
+      var t1=r.clockIn.split(':'),t2=r.clockOut.split(':');
+      var h=(parseInt(t2[0])*60+parseInt(t2[1]))-(parseInt(t1[0])*60+parseInt(t1[1]));
+      if(h<0)h+=1440;
+      totalHours+=h/60;
+      if(h>480)otHours+=(h-480)/60;
+    }
+  });
+  var base=parseFloat(empObj?empObj.salary:cfg.monthlySalary)||0;
+  var allowance=parseFloat(cfg.allowance)||0;
+  var bonus=parseFloat(cfg.bonus)||0;
+  var gross=base+allowance+bonus;
+  var lateDed=lateCount*parseFloat(cfg.latePenalty||0);
+  var earlyDed=earlyCount*parseFloat(cfg.earlyPenalty||0);
+  var otPay=otHours*(parseFloat(cfg.otRate)||0);
+  var loans=getLoans(username).filter(function(l){return !l.repaid});
+  var loanTotal=loans.reduce(function(s,l){return s+l.amount},0);
+  gross=gross-lateDed-earlyDed+otPay;
+  var epf=Math.round(gross*0.11*100)/100;
+  var socso=gross<=4000?Math.round(gross*0.005*100)/100:Math.round(gross*0.005*100)/100+0.6;
+  var eis=Math.round(gross*0.002*100)/100;
+  var taxable=gross-epf-socso-eis-9000;
+  var tax=taxable>0?calcTax(taxable):0;
+  var net=Math.round((gross-epf-socso-eis-tax-loanTotal)*100)/100;
+
+  return {
+    username:username, name:(empObj?empObj.name:username),
+    base:base, allowance:allowance, bonus:bonus,
+    daysWorked:daysWorked, lateCount:lateCount, earlyCount:earlyCount,
+    otHours:otHours, otPay:otPay, lateDed:lateDed, earlyDed:earlyDed,
+    gross:gross, epf:epf, socso:socso, eis:eis, tax:tax, loanTotal:loanTotal, net:net
+  };
+}
+
+function loadSalary(){
+  var empObj=getEmps().find(function(e){return e.username===CU.username});
+  var s=calcSalaryForUser(CU.username, empObj);
+  _currentSalaryData=s;
+  document.getElementById('sal-month-label').textContent=monthShort(salMonth)+' '+salYear;
+  document.getElementById('salary-result').innerHTML=
+    '<div class="card" style="padding:20px">'+
+    '<div style="display:flex;justify-content:space-between;margin-bottom:10px"><span>Base Salary</span><span>RM'+s.base.toFixed(2)+'</span></div>'+
+    (s.allowance>0?'<div style="display:flex;justify-content:space-between;margin-bottom:10px"><span>Allowance</span><span>RM'+s.allowance.toFixed(2)+'</span></div>':'')+
+    (s.bonus>0?'<div style="display:flex;justify-content:space-between;margin-bottom:10px"><span>Bonus</span><span>RM'+s.bonus.toFixed(2)+'</span></div>':'')+
+    '<div style="display:flex;justify-content:space-between;margin-bottom:10px"><span>Days Worked</span><span>'+s.daysWorked+' days</span></div>'+
+    '<div style="display:flex;justify-content:space-between;margin-bottom:10px"><span>Late ('+s.lateCount+'x RM'+(getCfg().latePenalty||0)+')</span><span>-RM'+s.lateDed.toFixed(2)+'</span></div>'+
+    '<div style="display:flex;justify-content:space-between;margin-bottom:10px"><span>Early ('+s.earlyCount+'x RM'+(getCfg().earlyPenalty||0)+')</span><span>-RM'+s.earlyDed.toFixed(2)+'</span></div>'+
+    '<div style="display:flex;justify-content:space-between;margin-bottom:10px"><span>OT Hours</span><span>'+s.otHours.toFixed(1)+'h (+RM'+s.otPay.toFixed(2)+')</span></div>'+
+    (s.loanTotal>0?'<div style="display:flex;justify-content:space-between;margin-bottom:10px"><span>Loan Deduction</span><span>-RM'+s.loanTotal.toFixed(2)+'</span></div>':'')+
+    '<hr style="margin:12px 0;border:none;border-top:1px solid #eee">'+
+    '<div style="display:flex;justify-content:space-between;margin-bottom:10px;font-weight:600"><span>Gross Salary</span><span>RM'+s.gross.toFixed(2)+'</span></div>'+
+    '<div style="display:flex;justify-content:space-between;margin-bottom:8px"><span>EPF (11%)</span><span>-RM'+s.epf.toFixed(2)+'</span></div>'+
+    '<div style="display:flex;justify-content:space-between;margin-bottom:8"><span>SOCSO</span><span>-RM'+s.socso.toFixed(2)+'</span></div>'+
+    '<div style="display:flex;justify-content:space-between;margin-bottom:8"><span>EIS (0.2%)</span><span>-RM'+s.eis.toFixed(2)+'</span></div>'+
+    '<div style="display:flex;justify-content:space-between;margin-bottom:10px"><span>Tax (PCB)</span><span>-RM'+s.tax.toFixed(2)+'</span></div>'+
+    '<hr style="margin:12px 0;border:none;border-top:1px solid #eee">'+
+    '<div style="display:flex;justify-content:space-between;font-size:18px;font-weight:700;color:#4472C4"><span>Net Salary</span><span>RM'+s.net.toFixed(2)+'</span></div>'+
+    '</div>';
+
+  // Show payslip preview + print button
+  renderPayslipPreview(s);
+  document.getElementById('payslip-container').style.display='block';
+}
+
+function renderPayslipPreview(s){
+  var co=getCoInfo();
+  var prof=getProfiles()[CU.username]||{};
+  var html='<div class="pps-header">'+
+    '<h2>'+(co.name||'Your Company')+'</h2>'+
+    '<p>'+(co.address||'Company Address')+(co.regNo?' | Reg: '+co.regNo:'')+'</p>'+
+    '</div>'+
+    '<div class="pps-sect">Employee Details</div>'+
+    '<div class="pps-row"><span>Name</span><span>'+(prof.name||s.name)+'</span></div>'+
+    '<div class="pps-row"><span>ID/EPF No.</span><span>'+(prof.epfNo||'-')+'</span></div>'+
+    '<div class="pps-row"><span>Tax No.</span><span>'+(prof.taxNo||'-')+'</span></div>'+
+    '<div class="pps-row"><span>Position</span><span>'+(prof.position||'-')+'</span></div>'+
+    '<div class="pps-row"><span>Period</span><span>'+monthName(salMonth)+' '+salYear+'</span></div>'+
+    '<div class="pps-sect">Earnings</div>'+
+    '<div class="pps-row"><span>Basic Salary</span><span>RM'+s.base.toFixed(2)+'</span></div>'+
+    (s.allowance>0?'<div class="pps-row"><span>Allowance</span><span>RM'+s.allowance.toFixed(2)+'</span></div>':'')+
+    (s.bonus>0?'<div class="pps-row"><span>Bonus</span><span>RM'+s.bonus.toFixed(2)+'</span></div>':'')+
+    (s.otPay>0?'<div class="pps-row"><span>Overtime ('+s.otHours.toFixed(1)+'h)</span><span>RM'+s.otPay.toFixed(2)+'</span></div>':'')+
+    '<div class="pps-row tot"><span>Total Earnings</span><span>RM'+s.gross.toFixed(2)+'</span></div>'+
+    '<div class="pps-sect">Deductions</div>'+
+    '<div class="pps-row"><span>EPF (11%)</span><span>RM'+s.epf.toFixed(2)+'</span></div>'+
+    '<div class="pps-row"><span>SOCSO</span><span>RM'+s.socso.toFixed(2)+'</span></div>'+
+    '<div class="pps-row"><span>EIS (0.2%)</span><span>RM'+s.eis.toFixed(2)+'</span></div>'+
+    '<div class="pps-row"><span>PCB Tax</span><span>RM'+s.tax.toFixed(2)+'</span></div>'+
+    (s.lateDed>0?'<div class="pps-row"><span>Late Deduction</span><span>RM'+s.lateDed.toFixed(2)+'</span></div>':'')+
+    (s.earlyDed>0?'<div class="pps-row"><span>Early Deduction</span><span>RM'+s.earlyDed.toFixed(2)+'</span></div>':'')+
+    (s.loanTotal>0?'<div class="pps-row"><span>Loan Repayment</span><span>RM'+s.loanTotal.toFixed(2)+'</span></div>':'')+
+    '<div class="pps-row tot"><span>Total Deductions</span><span>RM'+(s.epf+s.socso+s.eis+s.tax+s.lateDed+s.earlyDed+s.loanTotal).toFixed(2)+'</span></div>'+
+    '<div class="pps-row" style="margin-top:12px;padding-top:12px;border-top:2px solid #4472C4;font-size:17px;font-weight:700;color:#4472C4"><span>NET PAY</span><span>RM'+s.net.toFixed(2)+'</span></div>'+
+    '<div style="text-align:right;margin-top:16px;font-size:11px;color:#999">Generated by PaySlip Pro | '+new Date().toLocaleDateString()+'</div>';
+  document.getElementById('payslip-preview').innerHTML=html;
+}
+
+// ========== PRINT PAYSLLIP ==========
+function printPayslip(){
+  if(!_currentSalaryData)return toast('No data to print');
+  var s=_currentSalaryData;
+  var co=getCoInfo();
+  var prof=getProfiles()[CU.username]||{};
+  var totalDed=s.epf+s.socso+s.eis+s.tax+s.lateDed+s.earlyDed+s.loanTotal;
+  var printHtml='<div class="payslip">'+
+    '<div class="payslip-header">'+
+    '<h1>'+(co.name||'Your Company Name')+'</h1>'+
+    '<p>'+(co.address||'')+(co.address?'<br>':'')+(co.regNo?'Company Reg: '+co.regNo:'')+'</p>'+
+    '<p style="margin-top:8px;font-weight:700;font-size:16px;color:#4472C4">PAYSLIP / SLIP GAJI</p>'+
+    '</div>'+
+    '<div class="payslip-section-title">Employee Details / Maklumat Pekerja</div>'+
+    '<div class="payslip-row"><span>Name / Nama</span><span>'+(prof.name||s.name)+'</span></div>'+
+    '<div class="payslip-row"><span>ID / EPF No. / No. KWSP</span><span>'+(prof.epfNo||'-')+'</span></div>'+
+    '<div class="payslip-row"><span>Tax No. / No. Cukai Pendapatan</span><span>'+(prof.taxNo||'-')+'</span></div>'+
+    '<div class="payslip-row"><span>Position / Jawatan</span><span>'+(prof.position||'-')+'</span></div>'+
+    '<div class="payslip-row"><span>Join Date / Tarikh Mula</span><span>'+(prof.joinDate||'-')+'</span></div>'+
+    '<div class="payslip-row"><span>Period / Tempoh</span><span>'+monthName(salMonth)+' '+salYear+'</span></div>'+
+    '<div class="payslip-row"><span>Days Worked / Hari Bekerja</span><span>'+s.daysWorked+' days</span></div>'+
+    '<div class="payslip-section-title">Earnings / Pendapatan</div>'+
+    '<div class="payslip-row"><span>Basic Salary / Gaji Asas</span><span>RM '+s.base.toFixed(2)+'</span></div>'+
+    (s.allowance>0?'<div class="payslip-row"><span>Allowance / Elaun</span><span>RM '+s.allowance.toFixed(2)+'</span></div>':'')+
+    (s.bonus>0?'<div class="payslip-row"><span>Bonus / Bonus</span><span>RM '+s.bonus.toFixed(2)+'</span></div>':'')+
+    (s.otPay>0?'<div class="payslip-row"><span>Overtime / Kerja Lebih Masa ('+s.otHours.toFixed(1)+'h)</span><span>RM '+s.otPay.toFixed(2)+'</span></div>':'')+
+    '<div class="payslip-row total"><span>GROSS PAY / GAJI KASAR</span><span>RM '+s.gross.toFixed(2)+'</span></div>'+
+    '<div class="payslip-section-title">Deductions / Potongan</div>'+
+    '<div class="payslip-row"><span>EPF KWSP (11%)</span><span>RM '+s.epf.toFixed(2)+'</span></div>'+
+    '<div class="payslip-row"><span>SOCSO / PERKESO</span><span>RM '+s.socso.toFixed(2)+'</span></div>'+
+    '<div class="payslip-row"><span>EIS / SIP (0.2%)</span><span>RM '+s.eis.toFixed(2)+'</span></div>'+
+    '<div class="payslip-row"><span>PCB Tax / Cukai Pendapatan</span><span>RM '+s.tax.toFixed(2)+'</span></div>'+
+    (s.lateDed>0?'<div class="payslip-row"><span>Late Penalty / Denda Lewat</span><span>RM '+s.lateDed.toFixed(2)+'</span></div>':'')+
+    (s.earlyDed>0?'<div class="payslip-row"><span>Early Leave Penalty</span><span>RM '+s.earlyDed.toFixed(2)+'</span></div>':'')+
+    (s.loanTotal>0?'<div class="payslip-row"><span>Loan Repayment / Bayar Balik Pinjaman</span><span>RM '+s.loanTotal.toFixed(2)+'</span></div>':'')+
+    '<div class="payslip-row total"><span>TOTAL DEDUCTIONS / JUMLAH POTONGAN</span><span>RM '+totalDed.toFixed(2)+'</span></div>'+
+    '<div class="payslip-row" style="font-size:20px;margin-top:16px;padding-top:14px;border-top:3px double #333"><span style="font-weight:700">NET PAY / GAJI BERSIH</span><span style="font-weight:700;color:#4472C4">RM '+s.net.toFixed(2)+'</span></div>'+
+    '<div class="payslip-sign"><p>_________________________ &nbsp;&nbsp;&nbsp;&nbsp; _________________________</p><p>Employee Signature &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Employer Signature</p><p style="margin-top:4px">Tandatangan Pekerja &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Tandatangan Majikan</p></div>'+
+    '<div style="text-align:center;margin-top:20px;font-size:10px;color:#999;border-top:1px solid #eee;padding-top:8px">Generated by PaySlip Pro v9 | Date: '+new Date().toLocaleDateString()+' | This is a computer-generated payslip.</div>'+
+    '</div>';
+
+  document.getElementById('print-area').innerHTML=printHtml;
+  document.getElementById('print-area').style.display='block';
+  window.print();
+  setTimeout(function(){document.getElementById('print-area').style.display='none'},1000);
+}
+
+// Supervisor: print for any employee
+function showPrintSelect(){
+  var emps=getEmps(),html='';
+  if(emps.length===0){html='<div style="color:#999;text-align:center;padding:20px">No employees</div>'}
+  else emps.forEach(function(e){
+    html+='<div style="cursor:pointer;padding:12px;background:#f5f5f5;border-radius:8px;margin-bottom:8px;display:flex;justify-content:space-between" onclick="printForEmployee(\''+e.username+'\')"><span style="font-weight:600">'+e.name+'</span><span style="color:#4472C4">🖨️ Print</span></div>';
+  });
+  document.getElementById('print-emp-list').innerHTML=html;
+  document.getElementById('modal-print-select').classList.add('show');
+}
+
+function printForEmployee(username){
+  closeModal('print-select');
+  var empObj=getEmps().find(function(e){return e.username===username});
+  var s=calcSalaryForUser(username, empObj);
+  _currentSalaryData=s;
+  // Temporarily switch CU context for profile lookup
+  var oldCU=CU; CU={username:username};
+  renderPayslipPreview(s);
+  printPayslip();
+  CU=oldCU;
+}
+
+function calcTax(inc){
+  if(inc<=5000)return 0;
+  if(inc<=20000)return Math.round((inc-5000)*0.01*100)/100;
+  if(inc<=35000)return Math.round(150+(inc-20000)*0.03*100)/100;
+  if(inc<=50000)return Math.round(600+(inc-35000)*0.06*100)/100;
+  if(inc<=70000)return Math.round(1500+(inc-50000)*0.11*100)/100;
+  if(inc<=100000)return Math.round(3700+(inc-70000)*0.19*100)/100;
+  return Math.round(9400+(inc-100000)*0.25*100)/100;
+}
+
+function salNav(d){salMonth+=d;if(salMonth>12){salMonth=1;salYear++}if(salMonth<1){salMonth=12;salYear--}loadSalary()}
+
+function showAllSalary(){
+  var emps=getEmps(),html='';
+  emps.forEach(function(e){
+    var s=calcSalaryForUser(e.username, e);
+    html+='<div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #eee;cursor:pointer" onclick="printForEmployee(\''+e.username+'\')">'+
+      '<div><div style="font-weight:600">'+e.name+'</div><div style="font-size:11px;color:#999">'+s.daysWorked+'d | Late:'+s.lateCount+' Early:'+s.earlyCount+'</div></div>'+
+      '<div style="text-align:right"><div style="font-weight:600;color:#4472C4">RM'+s.net.toFixed(2)+'</div><div style="font-size:10px;color:#E6A23C">🖨️ Tap to print</div></div></div>';
+  });
+  document.getElementById('all-sal-content').innerHTML=html||'<div style="color:#999;text-align:center;padding:20px 0">No data</div>';
+  document.getElementById('modal-all-salary').classList.add('show');
+}
+
+// ========== PROFILE ==========
+function loadProfile(){
+  if(!CU)return;
+  var prof=getProfiles()[CU.username]||{};
+  document.getElementById('pf-name').value=prof.name||CU.name||CU.username;
+  document.getElementById('pf-dept').value=prof.department||'';
+  document.getElementById('pf-phone').value=prof.phone||'';
+  document.getElementById('pf-epf-no').value=prof.epfNo||'';
+  document.getElementById('pf-tax-no').value=prof.taxNo||'';
+  document.getElementById('pf-position').value=prof.position||'';
+  document.getElementById('pf-join').value=prof.joinDate||'';
+  var co=getCoInfo();
+  document.getElementById('co-name').value=co.name||'';
+  document.getElementById('co-address').value=co.address||'';
+  document.getElementById('co-reg').value=co.regNo||'';
+  var cfg=getCfg();
+  document.getElementById('cfg-salary').value=cfg.monthlySalary||'';
+  document.getElementById('cfg-late').value=cfg.latePenalty||'';
+  document.getElementById('cfg-early').value=cfg.earlyPenalty||'';
+  document.getElementById('cfg-ot').value=cfg.otRate||'';
+  document.getElementById('cfg-allowance').value=cfg.allowance||'0';
+  document.getElementById('cfg-bonus').value=cfg.bonus||'0';
+  if(CU.role==='supervisor')loadEmployees();
+}
+
+function saveProfile(){
+  var profs=getProfiles();
+  profs[CU.username]=profs[CU.username]||{};
+  profs[CU.username].name=document.getElementById('pf-name').value.trim();
+  profs[CU.username].department=document.getElementById('pf-dept').value.trim();
+  profs[CU.username].phone=document.getElementById('pf-phone').value.trim();
+  profs[CU.username].epfNo=document.getElementById('pf-epf-no').value.trim();
+  profs[CU.username].taxNo=document.getElementById('pf-tax-no').value.trim();
+  profs[CU.username].position=document.getElementById('pf-position').value.trim();
+  profs[CU.username].joinDate=document.getElementById('pf-join').value.trim();
+  saveProfiles(profs);
+  // Save company info
+  saveCoInfo({
+    name:document.getElementById('co-name').value.trim(),
+    address:document.getElementById('co-address').value.trim(),
+    regNo:document.getElementById('co-reg').value.trim()
+  });
+  toast('Saved!');
+}
+
+// ========== EMPLOYEE MANAGEMENT ==========
+function loadEmployees(){
+  var emps=getEmps(),html='';
+  emps.forEach(function(e){
+    var eid=e.id;
+    html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #eee"><div><div style="font-weight:600">'+e.name+'</div><div style="font-size:12px;color:#999">'+(e.department||'-')+' | RM'+(e.salary||0)+'</div></div><div style="display:flex;gap:8px"><span style="cursor:pointer;color:#4472C4;font-size:13px" onclick=\'editEmp("'+eid+'")\'>Edit</span><span style="cursor:pointer;color:#F56C6C;font-size:13px" onclick=\'deleteEmp("'+eid+'")\'>Delete</span></div></div>';
+  });
+  document.getElementById('emp-list-content').innerHTML=html;
+}
+
+function showEmpForm(id){
+  document.getElementById('emp-form-title').textContent=id?'Edit Employee':'Add Employee';
+  document.getElementById('ef-edit-id').value=id||'';
+  if(id){
+    var emps=getEmps(),e=emps.find(function(x){return x.id===id});
+    if(e){document.getElementById('ef-name').value=e.name||'';document.getElementById('ef-dept').value=e.department||'';document.getElementById('ef-phone').value=e.phone||'';document.getElementById('ef-salary').value=e.salary||'';document.getElementById('ef-epf').value=e.epfNo||'';document.getElementById('ef-pos').value=e.position||'';document.getElementById('ef-join').value=e.joinDate||''}
+  }else{document.getElementById('ef-name').value='';document.getElementById('ef-dept').value='';document.getElementById('ef-phone').value='';document.getElementById('ef-salary').value='';document.getElementById('ef-epf').value='';document.getElementById('ef-pos').value='';document.getElementById('ef-join').value=''}
+  document.getElementById('modal-emp-form').classList.add('show');
+}
+
+function saveEmp(){
+  var id=document.getElementById('ef-edit-id').value,data={
+    name:document.getElementById('ef-name').value.trim(),
+    department:document.getElementById('ef-dept').value.trim(),
+    phone:document.getElementById('ef-phone').value.trim(),
+    salary:document.getElementById('ef-salary').value,
+    epfNo:document.getElementById('ef-epf').value.trim(),
+    position:document.getElementById('ef-pos').value.trim(),
+    joinDate:document.getElementById('ef-join').value.trim()
+  };
+  if(!data.name)return toast('Name required');
+  var emps=getEmps();
+  if(id){var idx=emps.findIndex(function(x){return x.id===id});if(idx>=0){emps[idx]=Object.assign(emps[idx],data)}}
+  else{data.id=uid();data.username=data.name.toLowerCase().replace(/\s+/g,'_');emps.push(data)}
+  saveEmps(emps);closeModal('emp-form');loadEmployees();toast('Saved!');
+}
+
+function editEmp(id){
+  var emps=getEmps(),e=emps.find(function(x){return x.id===id});if(!e)return;
+  var m=document.getElementById('modal-edit');
+  document.getElementById('edit-emp-name').value=e.name;
+  document.getElementById('edit-emp-dept').value=e.department||'';
+  document.getElementById('edit-emp-salary').value=e.salary||0;
+  document.getElementById('edit-emp-epf').value=e.epfNo||'';
+  document.getElementById('edit-emp-tax').value=e.taxNo||'';
+  document.getElementById('edit-emp-pos').value=e.position||'';
+  document.getElementById('edit-emp-join').value=e.joinDate||'';
+  document.getElementById('edit-save-btn').onclick=function(){
+    e.name=document.getElementById('edit-emp-name').value.trim();
+    if(!e.name){toast('Name required!');return}
+    e.department=document.getElementById('edit-emp-dept').value.trim();
+    e.salary=parseFloat(document.getElementById('edit-emp-salary').value)||0;
+    e.epfNo=document.getElementById('edit-emp-epf').value.trim();
+    e.taxNo=document.getElementById('edit-emp-tax').value.trim();
+    e.position=document.getElementById('edit-emp-pos').value.trim();
+    e.joinDate=document.getElementById('edit-emp-join').value.trim();
+    saveEmps(emps);loadEmployees();m.classList.remove('show');toast('Employee updated!')
+  };
+  m.classList.add('show');
+}
+function deleteEmp(id){if(!confirm('Delete this employee?'))return;var emps=getEmps();saveEmps(emps.filter(function(x){return x.id!==id}));loadEmployees();toast('Deleted!')}
+
+// ========== LOAN MANAGEMENT ==========
+var loanTargetUser=null;
+function showLoanMgmt(){
+  var emps=getEmps(),html='<div style="margin-bottom:12px">Select Employee:</div>';
+  emps.forEach(function(e){
+    html+='<div style="cursor:pointer;padding:10px;background:#f5f5f5;border-radius:8px;margin-bottom:8px" onclick="openLoanFor(\''+e.username+'\',\''+e.name+'\')">'+e.name+'</div>';
+  });
+  document.getElementById('loan-list').innerHTML=html;
+  document.getElementById('modal-loan').classList.add('show');
+}
+
+function openLoanFor(uname,name){
+  loanTargetUser=uname;
+  document.getElementById('loan-emp-name').textContent=name;
+  var loans=getLoans(uname),total=loans.filter(function(l){return !l.repaid}).reduce(function(s,l){return s+l.amount},0);
+  var html='<div style="margin-bottom:12px;font-size:13px">Outstanding: <strong style="color:#E6A23C">RM'+total.toFixed(2)+'</strong></div>';
+  loans.forEach(function(l){
+    html+='<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #eee"><div><div style="font-size:13px;font-weight:600">RM'+l.amount.toFixed(2)+'</div><div style="font-size:11px;color:#999">'+l.date+(l.note?' - '+l.note:'')+'</div></div>'+(l.repaid?'<span class="badge badge-success">Paid</span>':'<span style="cursor:pointer;color:#E6A23C;font-size:12px" onclick="markRepaid(\''+l.id+'\')">Mark Paid</span>')+'</div>';
+  });
+  document.getElementById('loan-list').innerHTML=html;
+}
+
+function addLoan(){
+  if(!loanTargetUser){toast('Please select an employee first!');return}
+  var amt=document.getElementById('loan-amount').value;
+  if(!amt)return toast('Enter amount');
+  var loans=getLoans(loanTargetUser);
+  loans.push({id:uid(),amount:parseFloat(amt),note:document.getElementById('loan-note').value.trim(),date:fmt(new Date()),repaid:false});
+  saveLoans(loanTargetUser,loans);
+  document.getElementById('loan-amount').value='';document.getElementById('loan-note').value='';
+  openLoanFor(loanTargetUser,document.getElementById('loan-emp-name').textContent);
+  toast('Loan added!');
+}
+
+function markRepaid(id){
+  var loans=getLoans(loanTargetUser);
+  loans.forEach(function(l){if(l.id===id)l.repaid=true});
+  saveLoans(loanTargetUser,loans);
+  openLoanFor(loanTargetUser,document.getElementById('loan-emp-name').textContent);
+}
+
+// ========== CONFIG ==========
+function saveConfig(){
+  saveCfg({
+    monthlySalary:document.getElementById('cfg-salary').value,
+    latePenalty:document.getElementById('cfg-late').value,
+    earlyPenalty:document.getElementById('cfg-early').value,
+    otRate:document.getElementById('cfg-ot').value,
+    allowance:document.getElementById('cfg-allowance').value,
+    bonus:document.getElementById('cfg-bonus').value
+  });
+  toast('Config saved!');
+}
+
+// ========== EXPORT DATA ==========
+function exportData(){
+  var data={users:LS('users'),employees:getEmps(),attendance:getRecs(),config:getCfg(),profiles:getProfiles(),company:getCoInfo(),loans:{}};
+  getEmps().forEach(function(e){data.loans[e.username]=getLoans(e.username)});
+  var blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='payslip_pro_backup_'+fmt(new Date())+'.json';a.click();
+  toast('Data exported!');
+}
+
+// ========== MODAL ==========
+function closeModal(name){document.getElementById('modal-'+name).classList.remove('show')}
+
+// ========== INIT ==========
+initDB();
+var saved=LS('currentUser');
+if(saved){CU=saved;goMain()}
+</script>
+</body>
+</html>
