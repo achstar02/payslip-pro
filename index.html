@@ -378,6 +378,13 @@ function getRegPin(){
          document.getElementById('reg-pin3').value+
          document.getElementById('reg-pin4').value;
 }
+function regPinHandler(n){
+  var inp=document.getElementById('reg-pin'+n);
+  inp.value=inp.value.replace(/[^0-9]/g,'');
+  if(inp.value.length===1 && n<4){
+    setTimeout(function(){document.getElementById('reg-pin'+(n+1)).focus()},10);
+  }
+}
 
 
 // PIN Login Functions (Ultra-Simple - onkeyup + setTimeout)
@@ -393,12 +400,6 @@ function pinHandler(n){
   if(n===4 && inp.value.length===1){
     setTimeout(doPinLogin,100);
   }
-}
-function getPin(){
-  return document.getElementById('pin1').value+
-         document.getElementById('pin2').value+
-         document.getElementById('pin3').value+
-         document.getElementById('pin4').value;
 }
 function getPin(){
   return document.getElementById('pin1').value+
