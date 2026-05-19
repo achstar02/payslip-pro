@@ -407,9 +407,14 @@ function getPin(){
          document.getElementById('pin3').value+
          document.getElementById('pin4').value;
 }
+function initUsers(){
+  var u=JSON.parse(localStorage.getItem('users')||'[]');
+  if(u.length===0){u=[{username:'supervisor',name:'Supervisor',role:'supervisor',pin:'1234'}];localStorage.setItem('users',JSON.stringify(u));}
+}
 function doPinLogin(){
   var pin=getPin();
   if(pin.length!==4){toast('Please enter 4-digit PIN');return;}
+  initUsers();
   var users=JSON.parse(localStorage.getItem('users')||'[]');
   var found=users.find(function(u){return u.pin===pin});
   if(found){
