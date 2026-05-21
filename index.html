@@ -404,16 +404,21 @@ function initUsers(){
   if(u.length===0){u=[{username:'supervisor',name:'Supervisor',role:'supervisor',pin:'1234'}];localStorage.setItem('users',JSON.stringify(u));}
 }
 function doPinLogin(){
+  console.log('[DEBUG] doPinLogin called!');
   var pin=getPin();
-  if(pin.length!==4){toast('Please enter 4-digit PIN');return;}
+  console.log('[DEBUG] pin="' + pin + '" length=' + pin.length);
+  if(pin.length!==4){toast('Please enter 4-digit PIN');console.log('[DEBUG] PIN too short, returning');return;}
   initUsers();
   var users=JSON.parse(localStorage.getItem('users')||'[]');
+  console.log('[DEBUG] users count=' + users.length, JSON.stringify(users));
   var found=users.find(function(u){return u.pin===pin});
+  console.log('[DEBUG] found=', found ? found.username : 'NOT FOUND');
   if(found){
     CU=found;
     currentUser=found.username;
     localStorage.setItem('currentUser',currentUser);
     toast('Welcome, '+found.name);
+    console.log('[DEBUG] About to call goMain in 500ms...');
     setTimeout(goMain,500);
   }else{
     toast('Invalid PIN');
@@ -568,6 +573,7 @@ function renderInlineNav(active){
 }
 
 function goMain(){
+  console.log("[DEBUG] goMain called! CU=", CU);
   document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
   document.getElementById('page-index').classList.add('active');
   document.querySelectorAll('.tabbar-item').forEach(function(t){t.classList.remove('active')});
