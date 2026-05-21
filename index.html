@@ -418,6 +418,7 @@ function doPinLogin(){
   var users=JSON.parse(localStorage.getItem('users')||'[]');
   var found=users.find(function(u){return u.pin===pin});
   if(found){
+    CU=found;
     currentUser=found.username;
     localStorage.setItem('currentUser',currentUser);
     toast('Welcome, '+found.name);
