@@ -402,6 +402,12 @@ function getPin(){
 function initUsers(){
   var u=JSON.parse(localStorage.getItem('users')||'[]');
   if(u.length===0){u=[{username:'supervisor',name:'Supervisor',role:'supervisor',pin:'1234'}];localStorage.setItem('users',JSON.stringify(u));}
+  // Migrate: add pin to any user that doesn't have one
+  var changed=false;
+  for(var i=0;i<u.length;i++){
+    if(!u[i].pin){u[i].pin='1234';changed=true;}
+  }
+  if(changed)localStorage.setItem('users',JSON.stringify(u));
 }
 function doPinLogin(){
   console.log('[DEBUG] doPinLogin called!');
