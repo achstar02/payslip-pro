@@ -443,7 +443,7 @@ function monthName(m){return['January','February','March','April','May','June','
 function monthShort(m){return['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][m-1]}
 
 function initDB(){
-  if(!LS('users'))LS('users',[{username:'supervisor',password:'admin',name:'Supervisor',role:'supervisor'}]);
+  if(!LS('users'))LS('users',[{username:'supervisor',password:'admin',name:'Supervisor',role:'supervisor',pin:'1234'}]);
   if(!LS('config'))LS('config',{monthlySalary:3500,latePenalty:50,earlyPenalty:30,otRate:15,allowance:0,bonus:0});
   if(!LS('companyInfo'))LS('companyInfo',{name:'',address:'',regNo:''});
 }
