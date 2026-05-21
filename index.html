@@ -128,6 +128,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <!-- INDEX PAGE -->
 <div id="page-index" class="page">
 <div class="container">
+  <div id="inline-tabbar"></div>
   <div class="card" style="padding:25px 20px">
     <div style="display:flex;align-items:center;margin-bottom:20px">
       <div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#4472C4,#5B8FEF);display:flex;align-items:center;justify-content:center;font-size:24px;color:#fff;margin-right:16px">👤</div>
@@ -153,8 +154,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     </div>
   </div>
   <button class="btn-secondary" style="margin-top:10px" onclick="logout()">Logout</button>
-  <!-- INLINE TABBAR (fallback) -->
-  <div id="inline-tabbar"></div>
 </div>
 </div>
 
@@ -568,7 +567,7 @@ function go(page){
 
 function renderInlineNav(active){
   var items=[['index','🏠 Home'],['clock','⏰ Clock'],['records','📋 Records'],['salary','💰 Salary'],['profile','⚙️ Settings']];
-  var html='<div style="display:flex!important;justify-content:space-around;margin-top:16px;padding:12px;background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.08)">';
+  var html='<div style="display:flex!important;justify-content:space-around;padding:12px;background:#f8f9fa;position:sticky;top:0;z-index:100;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.08)">';
   items.forEach(function(it){
     var c=it[0]===active?'color:#4472C4;font-weight:600':'color:#999';
     html+='<div style="text-align:center;cursor:pointer;padding:8px 12px;font-size:13px;'+c+'" onclick="go(\''+it[0]+'\')">'+it[1]+'</div>';
